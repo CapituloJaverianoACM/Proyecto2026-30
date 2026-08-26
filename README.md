@@ -11,12 +11,16 @@ Construir un editor de Markdown que:
 
 ## Porque es importante?
 Genera las siguientes ventajas:
-- las notas se pueden acceder desde cualquier lugar
-- el usuario puede descargar sus notas para que sean procesadas por la IA, sin gastar demasiados tokens
-- permite escribir ecuaciones matematicas permitiendo al usuario tener todas sus notas en un solo lugar, ya que muchas veces es dificil tomar notas de ese tipo de cosas
+- Las notas se pueden acceder desde cualquier lugar sin instalar software pesado.
+- El usuario puede descargar sus notas en texto plano para que sean procesadas por herramientas de IA, ahorrando tokens.
+- Centraliza la toma de notas técnicas y matemáticas, solucionando un problema para estudiantes e ingenieros.
 
 ## Requisitos
-
 ### Funcionales
-
+- El sistema debe renderizar Markdown y LaTeX (como que se vea lindo)
+- El sistema debe almacenar las notas.
+- El sistema debe permir exportar las notas a archivos de formato `.md`.
 ### No Funcionales
+- El sistema debe tener una Interfaz de usuario (UI) responsiva y minimalista.
+- El sistema debe consumir pocos recursos. (depronto)
+- El sistema debe almacenar las notas en google drive (depronto)
