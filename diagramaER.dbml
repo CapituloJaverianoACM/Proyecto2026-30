@@ -1,0 +1,69 @@
+Project ObsidianWeb {
+  database_type: 'PostgreSQL'
+  Note: 'Modelo Entidad-Relación para un web de Obsidian'
+}
+
+Table usuarios {
+  id integer [primary key, increment]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  fecha_creacion timestamp
+}
+
+Table carpetas {
+  id integer [primary key, increment]
+  nombre varchar [not null]
+  usuario_id integer [not null]
+  parent_id integer [note: 'Permite subcarpetas infinitas']
+}
+
+Table notas {
+  id integer [primary key, increment]
+  titulo varchar [not null]
+  contenido text [note: 'Contenido en formato Markdown']
+  usuario_id integer [not null]
+  carpeta_id integer
+  fecha_modificacion timestamp
+}
+
+Table enlaces_a_otro_archivo {
+  origen_id integer [not null]
+  destino_id integer [not null]
+  
+  Indexes {
+    (origen_id, destino_id) [pk] // Llave primaria compuesta
+  }
+}
+
+Table etiquetas {
+  id integer [primary key, increment]
+  nombre varchar [unique, not null]
+}
+
+//ponerle etiquetas a las notas como (#backend, #frondend)
+Table nota_etiqueta {
+  nota_id integer [not null]
+  etiqueta_id integer [not null]
+
+  Indexes {
+    (nota_id, etiqueta_id) [pk]
+  }
+}
+
+// RELACIONES (Llaves Foráneas)
+
+// Relaciones del Usuario
+Ref: usuarios.id < carpetas.usuario_id
+Ref: usuarios.id < notas.usuario_id
+
+// Jerarquía de Carpetas y Notas
+Ref: carpetas.id < carpetas.parent_id
+Ref: carpetas.id < notas.carpeta_id
+
+// Enlaces entre Notas (Grafo)
+Ref: notas.id < enlaces_a_otro_archivo.origen_id
+Ref: notas.id < enlaces_a_otro_archivo.destino_id
+
+// Relación Muchos a Muchos (Notas <-> Etiquetas)
+Ref: notas.id < nota_etiqueta.nota_id
+Ref: etiquetas.id < nota_etiqueta.etiqueta_id
