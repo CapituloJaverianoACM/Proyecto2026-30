@@ -1,0 +1,32 @@
+name: Compilar Documentación Typst
+
+on:
+  push:
+    paths:
+      - "**/*.typ" 
+
+jobs:
+  build_and_commit:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Instalar Typst
+        uses: typst-community/setup-typst@v3
+
+      - name: Compilar a PDF
+        run: typst compile main.typ 
+
+      - name: Hacer commit y push del PDF
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: actualizar PDF de la documentación [skip ci]"
+          file_pattern: "*.pdf"
+
