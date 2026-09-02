@@ -38,7 +38,7 @@ El presente proyecto tiene como propósito desarrollar una aplicación web inspi
 A continuación se detalla el modelo de datos inicial. Se ha estructurado para soportar notas, carpetas recursivas y un sistema de relaciones de muchos a muchos para los enlaces.
 
 #align(center)[
-  #image("diagrama.svg", width: 95%)
+  #image("diagramaER.svg", width: 95%)
 ]
 
 = Requisitos
