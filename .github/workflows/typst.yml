@@ -3,8 +3,8 @@ name: Compilar Documentación Typst
 on:
   push:
     paths:
-      - '**/documentacion.typ' # despierta si cambian la documentacion
-      - '**/diagramaER.dbml' # despierta si cambian el diagrama
+      - 'documentacion.typ' # despierta si cambian la documentacion
+      - 'diagramaER.dbml' # despierta si cambian el diagrama
 
 jobs:
   build_and_commit:
