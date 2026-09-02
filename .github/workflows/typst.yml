@@ -28,7 +28,7 @@ jobs:
       # 2. GENERAR EL SVG
       - name: Convertir DBML a SVG
         # Usa un renderizador de línea de comandos para crear la imagen
-        run: npx @softwaretechnik/dbml-renderer diagramaER.dbml -o diagramaER.svg
+        run: npx @softwaretechnik/dbml-renderer -i diagramaER.dbml -o diagramaER.svg
 
       # 3. PREPARAR Y COMPILAR TYPST
       - name: Instalar Typst
