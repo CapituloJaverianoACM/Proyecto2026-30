@@ -20,9 +20,9 @@ El presente proyecto tiene como propósito desarrollar una aplicación web inspi
 - *Adam Kalel Ordoñez Herrera:* Backend
 - *Ivan Santiago Lastra Romero:* [Definir rol]
 - *Martin David Sanmiguel Delgado:* Backend, Frontend
-- *Nicolas Castañeda Vargas:* [Definir rol]
+- *Nicolas Castañeda Vargas:* Backend, Frontend
 - *Nicolas Ricardo Bustos Puerto:* Backend
-- *Nicolas Torres Roa:* [Definir rol]
+- *Nicolas Torres Roa:* Frontend
 - *Salomon Alfredo Avila Larrotta:* [Definir rol]
 
 = Objetivos (alcance del proyecto)
