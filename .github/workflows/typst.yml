@@ -1,45 +1,48 @@
 name: Compilar Documentación Typst
-
 on:
   push:
+    branches:
+      - develop
     paths:
-      - 'documentacion.typ' # despierta si cambian la documentacion
-      - 'diagramaER.dbml' # despierta si cambian el diagrama
+      - 'documentacion.typ'
+      - 'diagramaER.dbml'
 
 jobs:
   build_and_commit:
     runs-on: ubuntu-latest
-    
+
     permissions:
-      contents: write 
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
-      # 1. PREPARAR ENTORNO PARA DBML
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
-      # 2. GENERAR EL SVG
       - name: Convertir DBML a SVG
-        # Usa un renderizador de línea de comandos para crear la imagen
         run: npx @softwaretechnik/dbml-renderer -i diagramaER.dbml -o diagramaER.svg
 
-      # 3. PREPARAR Y COMPILAR TYPST
       - name: Instalar Typst
         uses: typst-community/setup-typst@v3
 
       - name: Compilar a PDF
-        run: typst compile documentacion.typ 
+        run: typst compile documentacion.typ
 
-      # 4. GUARDAR TODO EN GITHUB
-      - name: Hacer commit y push del PDF y SVG
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Crear Pull Request con PDF y SVG
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "docs: actualizar diagrama ER y PDF [skip ci]"
-          file_pattern: "documentacion.pdf diagramaER.svg" # Ahora guarda tanto el PDF como la imagen
+          commit-message: "docs: actualizar diagrama ER y PDF [skip ci]"
+          branch: auto/docs-update
+          delete-branch: true
+          title: "docs: actualizar diagrama ER y PDF"
+          body: "PR automático generado tras compilar la documentación Typst y el diagrama ER."
+          add-paths: |
+            documentacion.pdf
+            diagramaER.svg
