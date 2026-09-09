@@ -1,0 +1,26 @@
+{
+  "name": "proyecto2026-30",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web de Obsidian",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "dev:back": "pnpm --filter backend start:dev",
+    "dev:front": "pnpm --filter frontend dev"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.3.4",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.3.4",
+  "pnpm": {
+    "overrides": {
+      "prisma": "7.10.0",
+      "@prisma/client": "7.10.0"
+    }
+  }
+}

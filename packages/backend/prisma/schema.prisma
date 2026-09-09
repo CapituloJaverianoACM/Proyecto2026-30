@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
+
+  carpetas Carpeta[]
+  notas    Nota[]
+
+  @@map("usuarios")
+}
+
+model Carpeta {
+  id        Int    @id @default(autoincrement())
+  nombre    String
+  usuarioId Int    @map("usuario_id")
+  parentId  Int?   @map("parent_id")
+
+  usuario Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  parent  Carpeta?  @relation("Jerarquia", fields: [parentId], references: [id], onDelete: Cascade)
+  hijas   Carpeta[] @relation("Jerarquia")
+  notas   Nota[]
+
+  @@index([usuarioId])
+  @@map("carpetas")
+}
+
+model Nota {
+  id                Int      @id @default(autoincrement())
+  titulo            String
+  contenido         String?
+  usuarioId         Int      @map("usuario_id")
+  carpetaId         Int?     @map("carpeta_id")
+  fechaModificacion DateTime @updatedAt @map("fecha_modificacion")
+
+  usuario Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  carpeta Carpeta? @relation(fields: [carpetaId], references: [id], onDelete: SetNull)
+
+  enlacesSalientes Enlace[]       @relation("Origen")
+  enlacesEntrantes Enlace[]       @relation("Destino")
+  etiquetas        NotaEtiqueta[]
+
+  @@index([usuarioId])
+  @@index([carpetaId])
+  @@map("notas")
+}
+
+model Enlace {
+  origenId  Int @map("origen_id")
+  destinoId Int @map("destino_id")
+
+  origen  Nota @relation("Origen", fields: [origenId], references: [id], onDelete: Cascade)
+  destino Nota @relation("Destino", fields: [destinoId], references: [id], onDelete: Cascade)
+
+  @@id([origenId, destinoId])
+  @@index([destinoId])
+  @@map("enlaces_a_otro_archivo")
+}
+
+model Etiqueta {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+  color String? @db.VarChar(7) 
+
+  notas NotaEtiqueta[]
+
+  @@map("etiquetas")
+}
+
+model NotaEtiqueta {
+  notaId     Int @map("nota_id")
+  etiquetaId Int @map("etiqueta_id")
+
+  nota     Nota     @relation(fields: [notaId], references: [id], onDelete: Cascade)
+  etiqueta Etiqueta @relation(fields: [etiquetaId], references: [id], onDelete: Cascade)
+
+  @@id([notaId, etiquetaId])
+  @@index([etiquetaId])
+  @@map("nota_etiqueta")
+}

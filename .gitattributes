@@ -1,0 +1,22 @@
+# Normaliza los finales de línea para que Windows y Linux no generen diffs falsos.
+# Git guarda todo con LF en el repositorio y lo adapta al hacer checkout.
+
+* text=auto eol=lf
+
+# Archivos que deben conservar CRLF en Windows
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binarios: no tocar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+
+# Lockfiles: marcar como generados para que GitHub los colapse en los diffs
+pnpm-lock.yaml linguist-generated=true
