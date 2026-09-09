@@ -1,14 +1,14 @@
 {
-  "name": "Proyecto2026-30",
+  "name": "proyecto2026-30",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+  "private": true,
+  "description": "Web de Obsidian",
   "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "dev:back": "pnpm --filter backend start:dev",
+    "dev:front": "pnpm --filter frontend dev"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -17,5 +17,10 @@
     }
   },
   "packageManager": "pnpm@12.3.4",
-  "type": "module"
+  "pnpm": {
+    "overrides": {
+      "prisma": "7.10.0",
+      "@prisma/client": "7.10.0"
+    }
+  }
 }
