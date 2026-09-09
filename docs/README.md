@@ -1,9 +1,6 @@
 # Backend — Web de Obsidian
 
-# Documentacion? -> esta en el .typ
-# ER -> https://dbdiagram.io/d -> en un archivo .dbml
-
-#Guia para la compilacion 
+# Guia para la compilacion 
 
 API construida con NestJS, Prisma y PostgreSQL (Supabase).
 
