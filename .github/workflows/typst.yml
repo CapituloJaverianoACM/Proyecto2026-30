@@ -4,8 +4,8 @@ on:
     branches:
       - develop
     paths:
-      - 'documentacion.typ'
-      - 'diagramaER.dbml'
+      - 'docs/documentacion.typ'
+      - 'docs/diagramaER.dbml'
 
 jobs:
   build_and_commit:
@@ -27,7 +27,7 @@ jobs:
           node-version: '24'
 
       - name: Convertir DBML a SVG
-        run: npx @softwaretechnik/dbml-renderer -i diagramaER.dbml -o diagramaER.svg
+        run: npx @softwaretechnik/dbml-renderer -i docs/diagramaER.dbml -o docs/diagramaER.svg
 
       - name: Instalar Typst
         uses: typst-community/setup-typst@v3
@@ -44,5 +44,5 @@ jobs:
           title: "docs: actualizar diagrama ER y PDF"
           body: "PR automático generado tras compilar la documentación Typst y el diagrama ER."
           add-paths: |
-            documentacion.pdf
-            diagramaER.svg
+            docs/documentacion.pdf
+            docs/diagramaER.svg
