@@ -1,26 +1,18 @@
 {
-  "name": "proyecto2026-30",
-  "version": "1.0.0",
+  "name": "matriz-phaser",
   "private": true,
-  "description": "Web de Obsidian",
-  "license": "ISC",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev:back": "pnpm --filter backend start:dev",
-    "dev:front": "pnpm --filter frontend dev"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.3.4",
-      "onFail": "download"
-    }
+  "dependencies": {
+    "phaser": "^4.2.1"
   },
-  "packageManager": "pnpm@12.3.4",
-  "pnpm": {
-    "overrides": {
-      "prisma": "7.10.0",
-      "@prisma/client": "7.10.0"
-    }
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0"
   }
 }
