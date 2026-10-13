@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { FILAS, COLUMNAS, bola, mover } from "./modelo";
+import { FILAS, COLUMNAS, bola, basuras, mover, recogerBasura } from "./modelo";
 
 export const TAM_CELDA = 50; // píxeles
 const ALTO_TEXTO = 40; // espacio debajo de la matriz para el texto
@@ -7,6 +7,7 @@ const ALTO_TEXTO = 40; // espacio debajo de la matriz para el texto
 // ===== Vista + controles: una "escena" de Phaser =====
 export class EscenaMatriz extends Phaser.Scene {
   private circulo!: Phaser.GameObjects.Arc;
+  private circulosBasura = new Map<string, Phaser.GameObjects.Arc>();
   private info!: Phaser.GameObjects.Text;
   private moviendo = false; // evita mover otra vez mientras dura la animación
 
@@ -26,11 +27,18 @@ export class EscenaMatriz extends Phaser.Scene {
       lineas.lineBetween(0, f * TAM_CELDA, COLUMNAS * TAM_CELDA, f * TAM_CELDA);
     }
 
-    // 2. La bola (un círculo de Phaser que podemos mover y animar)
+    // 2. Basura estática: cada círculo rojo ocupa una casilla hasta que la bola la pisa.
+    for (const basura of basuras) {
+      const { x, y } = this.aPixeles(basura.fila, basura.col);
+      const circuloBasura = this.add.circle(x, y, TAM_CELDA * 0.2, 0xe53935);
+      this.circulosBasura.set(this.clave(basura.fila, basura.col), circuloBasura);
+    }
+
+    // 3. La bola (un círculo de Phaser que podemos mover y animar)
     const { x, y } = this.aPixeles(bola.fila, bola.col);
     this.circulo = this.add.circle(x, y, TAM_CELDA * 0.35, 0x2456c9);
 
-    // 3. Texto con la posición
+    // 4. Texto con la posición
     this.info = this.add.text(8, FILAS * TAM_CELDA + 10, "", {
       fontFamily: "system-ui, sans-serif",
       fontSize: "16px",
@@ -73,6 +81,7 @@ export class EscenaMatriz extends Phaser.Scene {
       duration: 120,
       ease: "Sine.easeInOut",
       onComplete: () => {
+        this.eliminarBasuraEn(bola.fila, bola.col);
         this.moviendo = false;
       },
     });
@@ -81,6 +90,19 @@ export class EscenaMatriz extends Phaser.Scene {
 
   private actualizarTexto(): void {
     this.info.setText(`Fila ${bola.fila}, columna ${bola.col}`);
+  }
+
+  private clave(fila: number, col: number): string {
+    return `${fila},${col}`;
+  }
+
+  private eliminarBasuraEn(fila: number, col: number): void {
+    const clave = this.clave(fila, col);
+    const circulo = this.circulosBasura.get(clave);
+    if (!circulo || !recogerBasura(fila, col)) return;
+
+    circulo.destroy();
+    this.circulosBasura.delete(clave);
   }
 }
 
