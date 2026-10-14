@@ -1,0 +1,4 @@
+*.cpp
+!ejemplo.cpp
+
+node_modules

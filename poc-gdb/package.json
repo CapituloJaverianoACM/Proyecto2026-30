@@ -1,0 +1,22 @@
+{
+  "name": "poc-gdb-movimiento",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Para depurar C++ con GDB/MI y obtener información de variables en timepo de ejecución",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "gdb-mi-parser": "^1.5.0"
+  }
+}
