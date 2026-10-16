@@ -28,4 +28,5 @@ Programa terminado
 
 ## Notas
 - Para invertir el sentido vertical, cambia `Y_AXIS_INVERTED` en `src/movement.ts`.
-- La entrada y salida del programa depurado se redirigen a `/dev/null`. (Osea se descartan)
+- La entrada y salida del programa depurado se redirigen a `/dev/null`. (Osea se descartan
+)

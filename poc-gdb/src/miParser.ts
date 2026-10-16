@@ -24,11 +24,11 @@ export type TipoRegistro = 'result' | 'exec' | 'notify' | 'console' | 'target' |
 export interface RegistroMi {
   tipo: TipoRegistro;
   token?: number;
-  /** done, running, error, stopped... (vacío en los streams) */
+  // done, running, error, stopped... (vacío en los streams)
   clase: string;
-  /** Pares clave=valor de la línea (vacío en los streams) */
+  // Pares clave=valor de la línea (vacío en los streams)
   datos: MiTupla;
-  /** Texto del stream (~ @ &) */
+  // Texto del stream (~ @ &)
   texto?: string;
 }
 
@@ -38,7 +38,7 @@ export interface VariableMi {
   valor?: string;
 }
 
-/** Parsea una línea de GDB. Devuelve null para "(gdb)", salida del programa o líneas malformadas. */
+// lee una línea de GDB. Devuelve null para gdb, salida del programa o líneas malformadas
 export function parsearLineaMi(linea: string): RegistroMi | null {
   let salida;
   try {
@@ -64,7 +64,7 @@ export function parsearLineaMi(linea: string): RegistroMi | null {
   };
 }
 
-/** Convierte `variables=[{name="x",value="5"},...]` en objetos tipados. */
+// Convierte `variables=[{name="x",value="5"},...]` en objetos tipados
 export function aVariables(valor: MiValor | undefined): VariableMi[] {
   if (!Array.isArray(valor)) return [];
   const variables: VariableMi[] = [];

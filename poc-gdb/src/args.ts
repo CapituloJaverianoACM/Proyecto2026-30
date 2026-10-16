@@ -12,7 +12,7 @@ export interface Opciones {
   maxPasos: number;
 }
 
-// Lee: `<archivo.cpp> [--verbose] [--max-steps=N]`.
+// Lee: <archivo.cpp> [--verbose] [--max-steps=N]
 export function leerOpciones(argv: string[]): Opciones {
   let archivo: string | undefined;
   let verbose = false;

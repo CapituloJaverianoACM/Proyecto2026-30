@@ -1,6 +1,7 @@
 // false => y crece para arriba. True => y crece para abajo.
 export const Y_AXIS_INVERTED = false;
 
+// DTO para representar una posición en el plano 
 export interface Posicion {
   x: number;
   y: number;

@@ -1,9 +1,9 @@
 /*
-  Cliente de GDB/MI. Cómo se sincroniza:
+  Cliente de GDB/MI
 
-   1. send("-exec-next") escribe "7-exec-next" (7 = token) y espera la línea "7^running".
-   2. Después GDB ejecuta el programa y avisa con "*stopped,..." (waitStop).
-   3. Si algo no responde en `timeoutMs`, o gdb muere, las promesas se rechazan.
+   1. send("-exec-next") escribe "7-exec-next" (7 = token) y espera la línea "7^running"
+   2. Después GDB ejecuta el programa y avisa con "*stopped,..."
+   3. Si algo no responde en `timeoutMs`, o gdb muere, las promesas se rechazan
 
  Los comandos se envían de uno en uno: quien llama hace `await` antes del siguiente.
 */
@@ -46,9 +46,11 @@ export class GdbClient {
   private cerrado: Promise<void>;
 
   constructor(binario: string, private timeoutMs = 5000) {
+    // Inicia el gdb con el programa y agarra todos los streams (sdin, stdout, stderr) para poder enviar comandos y recibir respuestas
     this.proceso = spawn('gdb', ['--interpreter=mi3', '--quiet', binario], {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
+
     this.cerrado = new Promise((resolver) => this.proceso.once('close', () => resolver()));
 
     this.proceso.on('error', (e: NodeJS.ErrnoException) =>
@@ -57,7 +59,7 @@ export class GdbClient {
     this.proceso.on('close', (codigo, senal) =>
       this.fallar(new Error(`gdb terminó inesperadamente (código ${codigo}, señal ${senal})`)),
     );
-    this.proceso.stdin.on('error', () => { /* EPIPE: ya lo avisa el evento 'close' */ });
+    this.proceso.stdin.on('error', () => { /* Ya lo maneja el evento 'close' */ });
     this.proceso.stderr.on('data', () => { /* no se necesita */ });
 
     readline
@@ -65,12 +67,17 @@ export class GdbClient {
       .on('line', (linea) => this.alRecibirLinea(linea));
   }
 
-  // ---------- API pública ----------
+  // ---------- API --------------------------
 
   // Envía un comando MI y espera su respuesta (^done, ^running...). Rechaza con ^error.
   send(comando: string): Promise<RegistroMi> {
+    // Si gdb ya murió, rechaza
     if (this.muerto) return Promise.reject(this.muerto);
+
+    // Cada comando tiene un token único, que se usa para emparejar la respuesta con el comando
     const token = this.siguienteToken++;
+
+    // Se crea una promesa que se resolverá cuando llegue la respuesta, o se rechazará si hay timeout o error
     return new Promise((resolver, rechazar) => {
       const temporizador = setTimeout(() => {
         this.comandosPendientes.delete(token);
@@ -83,10 +90,12 @@ export class GdbClient {
 
   // Espera el siguiente *stopped.
   waitStop(): Promise<Parada> {
+    // Obtiene una parada que ya haya llegado, o espera a que llegue una nueva. Rechaza si gdb murio
     const guardada = this.paradasEnCola.shift();
     if (guardada) return Promise.resolve(guardada);
     if (this.muerto) return Promise.reject(this.muerto);
 
+    // Crea una promesa que se resolverá cuando llegue un *stopped, o se rechazará si hay timeout
     return new Promise((resolver, rechazar) => {
       const temporizador = setTimeout(() => {
         this.esperaParada = null;
@@ -102,20 +111,24 @@ export class GdbClient {
     return this.waitStop();
   }
 
+  // Pide a gdb la lista de variables y sus valores, y devuelve un array de VariableMi
   async listarVariables(): Promise<VariableMi[]> {
     const r = await this.send('-stack-list-variables --simple-values');
     return aVariables(r.datos.variables);
   }
 
-  // Cierra gdb (que mata también al programa) y espera a que el proceso termine.
+  // Cierra gdb y espera a que el proceso termine.
   async close(): Promise<void> {
     if (!this.muerto) {
       try {
         this.proceso.stdin.write('-gdb-exit\n');
-      } catch { /* ya estaba cerrado */ }
+      } catch { }
     }
+
+    // Espera a que gdb termine, y si no lo hace en 2 segundos, lo mata con SIGKILL
     const matar = setTimeout(() => this.proceso.kill('SIGKILL'), 2000);
     await this.cerrado;
+    // Si gdb terminó antes de los 2 segundos, cancela el temporizador
     clearTimeout(matar);
   }
 

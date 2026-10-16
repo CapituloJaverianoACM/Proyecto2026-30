@@ -16,23 +16,29 @@ export interface ResultadoCompilacion {
 // Compila con g++ a un directorio temporal. Rechaza con el stderr del compilador si falla
 // Devuelve una promesa que resuelve con la ruta del binario y un método para limpiar el directorio temporal (promesa = asincrónica)
 export async function compilar(source: string): Promise<ResultadoCompilacion> {
+  // Crea un directorio temporal para el binario
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'poc-gdb-'));
   const rutaBinario = path.join(dir, 'programa');
   const limpiar = () => fs.rmSync(dir, { recursive: true, force: true });
 
   try {
     await new Promise<void>((resolve, reject) => {
+      // Ejecuta g++ para compilar el código fuente, sin optimización y con información de depuración (-g)
       const p = spawn('g++', ['-g', '-O0', '-std=c++17', source, '-o', rutaBinario]);
       let stderr = '';
+      // Captura el stderr del compilador para mostrarlo si hay un error
       p.stderr.on('data', (d: Buffer) => (stderr += d.toString()));
       p.on('error', (e: NodeJS.ErrnoException) =>
         reject(new Error(e.code === 'ENOENT' ? 'g++ no encontrado en el PATH' : e.message)),
       );
+
+      // Cuando el proceso termina, acepta (resolve) o rechaza la promesa según el código de salida
       p.on('close', (code) =>
         code === 0 ? resolve() : reject(new Error(`Error de compilación:\n${stderr}`)),
       );
     });
   } catch (e) {
+    // Si hay error, limpia el directorio temporal y lanza error
     limpiar();
     throw e;
   }

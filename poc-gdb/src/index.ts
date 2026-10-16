@@ -8,23 +8,27 @@ import { ResultadoCompilacion, compilar, variablesFaltantes } from './compiler.j
 import { GdbClient, type Parada } from './gdbClient.js';
 import { detectarMovimiento, type Posicion } from './movement.js';
 
+//Indica maximo de tiempo que se espera a GDB para responder, si lo excede se mata
 const TIMEOUT_GDB_MS = 5000;
 
-// EPIPE (p. ej. `| head`): no abortar sin limpiar.
+// Permite omitir errores en el stdout, asi si otro proceso molesta, no detiene la ejecución de este
 process.stdout.on('error', () => {});
 
-/** Lee x e y como enteros; null si no están en el frame o aún no son números. */
+// Lee x e y como enteros; null si no están en el frame o aún no son números.
 function leerPosicion(variables: { nombre: string; valor?: string }[]): Posicion | null {
   const leer = (nombre: string) => {
     const valor = variables.find((v) => v.nombre === nombre)?.valor;
+    //revisa que el valor sea un número entero, sino devuelve null
     return valor !== undefined && /^-?\d+$/.test(valor) ? Number(valor) : null;
   };
+
+  // lee las variables x e y, también se puede expandir a más variables a futuro
   const x = leer('x');
   const y = leer('y');
   return x === null || y === null ? null : { x, y };
 }
 
-/** Comprueba el argumento y que el archivo exista. Devuelve la ruta absoluta o null (error ya mostrado). */
+// Comprueba el argumento y que el archivo exista. Devuelve la ruta absoluta o null
 function validarEntrada(archivo: string | undefined): string | null {
   if (!archivo) {
     console.error('Uso: npx tsx src/index.ts <archivo.cpp> [--verbose] [--max-steps=N]');
@@ -37,7 +41,7 @@ function validarEntrada(archivo: string | undefined): string | null {
   return path.resolve(archivo);
 }
 
-/** Si la parada es el fin del programa, devuelve el mensaje para mostrar; si no, null. */
+// comprueba si la parada es el fin del programa, devuelve el mensaje para mostrar; si no, null.
 function mensajeDeFin(parada: Parada): string | null {
   if (parada.motivo === 'exited-normally' || parada.motivo === 'exited') {
     return `Programa terminado${parada.codigoSalida ? ` (código ${parada.codigoSalida})` : ''}`;
@@ -50,26 +54,35 @@ function mensajeDeFin(parada: Parada): string | null {
 
 // Ejecuta paso a paso y compara x e y entre pasos consecutivos.
 async function recorrerPrograma(gdb: GdbClient, verbose: boolean, maxPasos: number): Promise<void> {
-  // La salida/entrada del programa va a /dev/null para no mezclarse con el MI.
+  //Manda lo que salga u entre al programa a /dev/null, para que no se vea en la consola
   await gdb.send('-inferior-tty-set /dev/null');
+  // Se añade el breakpoint en main
   await gdb.send('-break-insert main');
+  // Inicia el programa
   let parada = await gdb.exec('-exec-run');
 
+  // Permite que la variable sea posición o null
   let anterior: Posicion | null = null;
   let paso = 0;
 
+  // Bucle infinito (se podia haber hecho un while pero aja)
   for (;;) {
+    // Si el programa terminó, se muestra el mensaje y termina
     const fin = mensajeDeFin(parada);
+    // Si no, se continúa con el siguiente paso
     if (fin) {
       console.log(fin);
       return;
     }
+
+    // Si se superó el límite de pasos, se acaba
     if (++paso > maxPasos) {
       console.log(`Límite de ${maxPasos} pasos alcanzado`);
       return;
     }
 
-    // La primera parada (entrada a main) tiene x/y sin inicializar (basura): se descarta.
+
+    // La primera parada (entrada a main) tiene x/y sin inicializar (osea tiene datos basura), entonces se omiten
     if (parada.conFuente && paso > 1) {
       const actual = leerPosicion(await gdb.listarVariables());
       if (actual) {
@@ -78,11 +91,12 @@ async function recorrerPrograma(gdb: GdbClient, verbose: boolean, maxPasos: numb
       }
     }
 
-    // Fuera del código con símbolos (p. ej. al salir de main) `next` no sirve: continuar.
+    // Sigue con el siguiente paso si hay código fuente, si hay un salto a código sin fuente, se hace un continue
     parada = await gdb.exec(parada.conFuente ? '-exec-next' : '-exec-continue');
   }
 }
 
+// Muestra el movimiento de x e y entre dos posiciones, si hay cambio o si verbose=true
 function mostrarMovimiento(linea: number | undefined, antes: Posicion, ahora: Posicion, verbose: boolean): void {
   const direccion = detectarMovimiento(antes, ahora);
   if (!direccion && !verbose) return;
@@ -106,6 +120,7 @@ async function main(): Promise<number> {
   }
   console.log('Compilación correcta');
 
+  // Cierra gdb y borra el binario al terminar, o si hay Ctrl+C
   let gdb: GdbClient | undefined;
   const limpiarTodo = async () => {
     await gdb?.close().catch(() => {});
@@ -114,6 +129,7 @@ async function main(): Promise<number> {
   // Ctrl+C: cerrar gdb y borrar el binario antes de salir.
   process.once('SIGINT', () => void limpiarTodo().finally(() => process.exit(130)));
 
+  // Incio del programa
   try {
     const faltantes = variablesFaltantes(fs.readFileSync(fuente, 'utf8'), ['x', 'y']);
     if (faltantes.length) {
@@ -133,4 +149,5 @@ async function main(): Promise<number> {
   }
 }
 
+// Ejecuta main() y termina con el código de salida que devuelva
 main().then((codigo) => process.exit(codigo));
