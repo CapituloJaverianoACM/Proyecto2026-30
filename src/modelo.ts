@@ -3,6 +3,7 @@
 
 export const FILAS = 10;
 export const COLUMNAS = 10;
+export let Basurasrecogidas = 0;
 
 export interface Posicion {
   fila: number;
@@ -42,5 +43,6 @@ export function recogerBasura(fila: number, col: number): boolean {
   if (indice === -1) return false;
 
   basuras.splice(indice, 1);
+  Basurasrecogidas++;
   return true;
 }

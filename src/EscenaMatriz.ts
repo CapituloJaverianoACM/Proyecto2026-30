@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { FILAS, COLUMNAS, bola, basuras, mover, recogerBasura } from "./modelo";
+import { FILAS, COLUMNAS, bola, basuras, mover, recogerBasura, Basurasrecogidas } from "./modelo";
 
 export const TAM_CELDA = 50; // píxeles
 const ALTO_TEXTO = 40; // espacio debajo de la matriz para el texto
@@ -89,7 +89,10 @@ export class EscenaMatriz extends Phaser.Scene {
   }
 
   private actualizarTexto(): void {
-    this.info.setText(`Fila ${bola.fila}, columna ${bola.col}`);
+    this.info.setText(`Fila ${bola.fila}, columna ${bola.col}, basuras recogidas: ${Basurasrecogidas}`);
+    if(basuras.length === 0) {
+      this.info.setText(`¡Felicidades! Has recogido toda la basura.`);
+    }
   }
 
   private clave(fila: number, col: number): string {
@@ -103,6 +106,7 @@ export class EscenaMatriz extends Phaser.Scene {
 
     circulo.destroy();
     this.circulosBasura.delete(clave);
+    this.actualizarTexto();
   }
 }
 
