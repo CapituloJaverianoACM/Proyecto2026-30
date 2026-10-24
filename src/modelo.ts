@@ -1,8 +1,8 @@
 // ===== Modelo: la lógica del juego, sin nada de Phaser =====
 // Este archivo es idéntico en espíritu al de la versión con canvas.
 
-export const FILAS = 10;
-export const COLUMNAS = 10;
+export const FILAS = 15;
+export const COLUMNAS = 15;
 export let Basurasrecogidas = 0;
 
 export interface Posicion {

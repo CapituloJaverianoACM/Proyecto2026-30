@@ -17,6 +17,7 @@ export class EscenaMatriz extends Phaser.Scene {
 
   // create() se ejecuta una sola vez al iniciar la escena
   create(): void {
+    
     // 1. Líneas de la cuadrícula
     const lineas = this.add.graphics();
     lineas.lineStyle(1, 0xcccccc);
