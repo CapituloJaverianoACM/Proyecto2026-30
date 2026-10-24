@@ -98,9 +98,10 @@ export class EscenaNivel extends Phaser.Scene {
 
     private actualizarTexto(): void {
         this.info.setText(`Fila ${this.partida.bola.fila}, columna ${this.partida.bola.col}, basuras recogidas: ${this.partida.recogidas}`);
-        if (this.partida.basuras.length === 0) {
-            this.partida.terminado;
+        if (this.partida.terminado) {
+            this.info.setText(`¡Felicidades! Has recogido toda la basura.`);
         }
+
     }
 
     private clave(fila: number, col: number): string {
