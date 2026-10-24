@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { EscenaMatriz, ANCHO_JUEGO, ALTO_JUEGO } from "./EscenaMatriz";
+import { Menu } from "./Menu";
 
 // ===== Arranque: configuración del juego de Phaser =====
 new Phaser.Game({
@@ -8,5 +9,5 @@ new Phaser.Game({
   width: ANCHO_JUEGO,
   height: ALTO_JUEGO,
   backgroundColor: "#ffffff",
-  scene: [EscenaMatriz],
+  scene: [Menu, EscenaMatriz],
 });

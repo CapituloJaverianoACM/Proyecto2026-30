@@ -52,6 +52,8 @@ export class EscenaMatriz extends Phaser.Scene {
     teclado.on("keydown-DOWN", () => this.intentarMover(1, 0));
     teclado.on("keydown-LEFT", () => this.intentarMover(0, -1));
     teclado.on("keydown-RIGHT", () => this.intentarMover(0, 1));
+
+    teclado.on("keydown-ESC", () => this.scene.start("Menu"));
   }
 
   // Convierte una posición de la matriz al centro de la celda en píxeles

@@ -46,3 +46,11 @@ export function recogerBasura(fila: number, col: number): boolean {
   Basurasrecogidas++;
   return true;
 }
+
+export function reiniciarJuego(): void {
+  bola.fila = 0;
+  bola.col = 0;
+  basuras.length = 0;
+  basuras.push();
+  Basurasrecogidas = 0;
+}
