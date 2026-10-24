@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Partida } from "../modelo/Partida";
 import { NIVELES } from "../niveles";
-import { TAM_CELDA } from "../config";
+import { TAM_TABLERO } from "../config";
 
 // ===== Vista + controles: una "escena" de Phaser =====
 export class EscenaNivel extends Phaser.Scene {
@@ -11,6 +11,10 @@ export class EscenaNivel extends Phaser.Scene {
     private info!: Phaser.GameObjects.Text;
     private moviendo = false; // evita mover otra vez mientras dura la animación
     private indiceNivel = 0; // índice del nivel actual
+    private tam = 0;      // tamaño de celda de ESTE nivel, en píxeles
+    private origenX = 0;  // dónde empieza el tablero (esquina superior izquierda)
+    private origenY = 0;
+
 
     constructor() {
         super("EscenaNivel");
@@ -22,30 +26,43 @@ export class EscenaNivel extends Phaser.Scene {
         this.circulosBasura.clear();
         this.moviendo = false;
 
+        const { filas, columnas } = this.partida.nivel;
+        this.tam = Math.floor(TAM_TABLERO / Math.max(filas, columnas));
+        this.origenX = (TAM_TABLERO - columnas * this.tam) / 2;
+        this.origenY = (TAM_TABLERO - filas * this.tam) / 2;
 
+        
         // 1. Líneas de la cuadrícula
         const lineas = this.add.graphics();
         lineas.lineStyle(1, 0xcccccc);
-        for (let c = 0; c <= this.partida.nivel.columnas; c++) {
-            lineas.lineBetween(c * TAM_CELDA, 0, c * TAM_CELDA, this.partida.nivel.filas * TAM_CELDA);
+
+
+
+        const ancho = columnas * this.tam;
+        const alto = filas * this.tam;
+        for (let c = 0; c <= columnas; c++) {
+            const x = this.origenX + c * this.tam;
+            lineas.lineBetween(x, this.origenY, x, this.origenY + alto);
         }
-        for (let f = 0; f <= this.partida.nivel.filas; f++) {
-            lineas.lineBetween(0, f * TAM_CELDA, this.partida.nivel.columnas * TAM_CELDA, f * TAM_CELDA);
+        for (let f = 0; f <= filas; f++) {
+            const y = this.origenY + f * this.tam;
+            lineas.lineBetween(this.origenX, y, this.origenX + ancho, y);
         }
+
 
         // 2. Basura estática: cada círculo rojo ocupa una casilla hasta que la bola la pisa.
         for (const basura of this.partida.basuras) {
             const { x, y } = this.aPixeles(basura.fila, basura.col);
-            const circuloBasura = this.add.circle(x, y, TAM_CELDA * 0.2, 0xe53935);
+            const circuloBasura = this.add.circle(x, y, this.tam * 0.2, 0xe53935);
             this.circulosBasura.set(this.clave(basura.fila, basura.col), circuloBasura);
         }
 
         // 3. La bola (un círculo de Phaser que podemos mover y animar)
         const { x, y } = this.aPixeles(this.partida.bola.fila, this.partida.bola.col);
-        this.circulo = this.add.circle(x, y, TAM_CELDA * 0.35, 0x2456c9);
+        this.circulo = this.add.circle(x, y, this.tam * 0.35, 0x2456c9);
 
         // 4. Texto con la posición
-        this.info = this.add.text(8, this.partida.nivel.filas * TAM_CELDA + 10, "", {
+        this.info = this.add.text(8, TAM_TABLERO + 10, "", {
             fontFamily: "system-ui, sans-serif",
             fontSize: "16px",
             color: "#333333",
@@ -65,9 +82,10 @@ export class EscenaNivel extends Phaser.Scene {
     // Convierte una posición de la matriz al centro de la celda en píxeles
     private aPixeles(fila: number, col: number): { x: number; y: number } {
         return {
-            x: col * TAM_CELDA + TAM_CELDA / 2,
-            y: fila * TAM_CELDA + TAM_CELDA / 2,
+            x: this.origenX + col * this.tam + this.tam / 2,
+            y: this.origenY + fila * this.tam + this.tam / 2,
         };
+
     }
 
     private intentarMover(df: number, dc: number): void {
