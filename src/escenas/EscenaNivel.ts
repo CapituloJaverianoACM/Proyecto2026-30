@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Partida } from "../modelo/Partida";
 import { NIVELES } from "../niveles";
 import { TAM_TABLERO } from "../config";
+import { mostrarPanel, escribiendoCodigo } from "../code/panel";
 
 // ===== Vista + controles: una "escena" de Phaser =====
 export class EscenaNivel extends Phaser.Scene {
@@ -23,6 +24,8 @@ export class EscenaNivel extends Phaser.Scene {
     // create() se ejecuta una sola vez al iniciar la escena
     create(): void {
         this.partida = new Partida(NIVELES[this.indiceNivel]); // Cargar el primer nivel
+        //muestra el panel
+        mostrarPanel(this.partida.nivel, this.indiceNivel + 1);
         this.circulosBasura.clear();
         this.moviendo = false;
 
@@ -75,8 +78,11 @@ export class EscenaNivel extends Phaser.Scene {
         teclado.on("keydown-DOWN", () => this.intentarMover(1, 0));
         teclado.on("keydown-LEFT", () => this.intentarMover(0, -1));
         teclado.on("keydown-RIGHT", () => this.intentarMover(0, 1));
-
         teclado.on("keydown-ESC", () => this.scene.start("Menu"));
+
+        teclado.on("keydown-ESC", () => {
+            if(!escribiendoCodigo()) this.scene.start("Menu");
+        })
     }
 
     // Convierte una posición de la matriz al centro de la celda en píxeles
@@ -89,7 +95,7 @@ export class EscenaNivel extends Phaser.Scene {
     }
 
     private intentarMover(df: number, dc: number): void {
-        if (this.moviendo) return;
+        if (this.moviendo || escribiendoCodigo()) return;
 
         if (!this.partida.mover(df, dc)) {
             // Se iba a salir: sacudimos la cámara como aviso

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { ANCHO_JUEGO, ALTO_JUEGO, TAM_CELDA } from "../config";
+import {ocultarPanel} from "../code/panel";
 
 export class Menu extends Phaser.Scene {
     constructor() {
@@ -7,6 +8,7 @@ export class Menu extends Phaser.Scene {
     }
 
     create(): void {
+        ocultarPanel(); // oculta el panel lateral al entrar al menú
         const centroX = ANCHO_JUEGO / 2;
 
         // 1. Fondo oscuro + cuadrícula suave que recuerda al tablero del juego

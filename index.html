@@ -1,22 +1,89 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matriz con Phaser</title>
-    <style>
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matriz con Phaser</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f2f2f2;
+    }
+
+    #contenedor {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    #panel {
+      width: 360px;
+      height: 640px;
+      /* = ALTO_JUEGO de config.ts */
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-family: system-ui, sans-serif;
+    }
+
+    #panel[hidden] {
+      display: none;
+    }
+
+    #panel h2 {
+      margin: 0;
+      color: #2456c9;
+    }
+
+    #panel p {
+      margin: 0;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    #codigo {
+      flex: 1;
+      /* ocupa todo el alto que sobra */
+      resize: none;
+      padding: 12px;
+      font-family: "Fira Code", Consolas, monospace;
+      font-size: 15px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border: none;
+      border-radius: 8px;
+    }
+
+    #ejecutar {
+      padding: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background: #43a047;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="contenedor">
     <div id="juego"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <aside id="panel" hidden>
+      <h2 id="titulo-nivel"></h2>
+      <p id="texto-nivel"></p>
+      <textarea id="codigo" spellcheck="false" placeholder="// escribe tu código C++ aquí"></textarea>
+      <button id="ejecutar">▶ Ejecutar</button>
+    </aside>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
