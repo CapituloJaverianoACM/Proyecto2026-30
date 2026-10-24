@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { ANCHO_JUEGO, ALTO_JUEGO, TAM_CELDA } from "../EscenaMatriz";
+import { ANCHO_JUEGO, ALTO_JUEGO, TAM_CELDA } from "../config";
 
 export class Menu extends Phaser.Scene {
     constructor() {

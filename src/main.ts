@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { ANCHO_JUEGO, ALTO_JUEGO } from "./EscenaMatriz";
+import { ANCHO_JUEGO, ALTO_JUEGO } from "./config";
 import { EscenaNivel } from "./escenas/EscenaNivel";
 import { Menu } from "./escenas/EscenaMenu";
 

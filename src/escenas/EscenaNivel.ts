@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import { Partida } from "../modelo/Partida";
 import { NIVELES } from "../niveles";
-
-export const TAM_CELDA = 50; // píxeles
+import { TAM_CELDA } from "../config";
 
 // ===== Vista + controles: una "escena" de Phaser =====
 export class EscenaNivel extends Phaser.Scene {
