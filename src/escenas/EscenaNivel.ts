@@ -11,6 +11,7 @@ export class EscenaNivel extends Phaser.Scene {
     private circulosBasura = new Map<string, Phaser.GameObjects.Arc>();
     private info!: Phaser.GameObjects.Text;
     private moviendo = false; // evita mover otra vez mientras dura la animación
+    private indiceNivel = 0; // índice del nivel actual
 
     constructor() {
         super("EscenaNivel");
@@ -18,7 +19,7 @@ export class EscenaNivel extends Phaser.Scene {
 
     // create() se ejecuta una sola vez al iniciar la escena
     create(): void {
-        this.partida = new Partida(NIVELES[0]); // Cargar el primer nivel
+        this.partida = new Partida(NIVELES[this.indiceNivel]); // Cargar el primer nivel
         this.circulosBasura.clear();
         this.moviendo = false;
 
@@ -116,5 +117,24 @@ export class EscenaNivel extends Phaser.Scene {
         circulo.destroy();
         this.circulosBasura.delete(clave);
         this.actualizarTexto();
+
+        if (this.partida.terminado) {
+            this.moviendo = true; // truco: bloquea las flechas mientras esperamos
+            this.time.delayedCall(1500, () => {
+                const siguiente = this.indiceNivel + 1;
+                if (siguiente < NIVELES.length) {
+                    this.scene.start("EscenaNivel", { indice: siguiente });
+                } else {
+                    this.scene.start("Menu");
+                }
+            });
+        }
+
+
+    }
+
+
+    init(data: { indice?: number }): void {
+        this.indiceNivel = data.indice ?? 0;
     }
 }

@@ -75,7 +75,7 @@ export class Menu extends Phaser.Scene {
             if (saliendo) return;
             saliendo = true;
             this.cameras.main.fadeOut(300);
-            this.cameras.main.once("camerafadeoutcomplete", () => this.scene.start("EscenaNivel"));
+            this.scene.start("EscenaNivel", {indice: 0});
         };
         this.input.keyboard!.once("keydown-ENTER", () => empezar());
     }
