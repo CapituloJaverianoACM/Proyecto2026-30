@@ -51,6 +51,14 @@ export function reiniciarJuego(): void {
   bola.fila = 0;
   bola.col = 0;
   basuras.length = 0;
-  basuras.push();
+  basuras.push(    
+  { fila: 1, col: 3 },
+  { fila: 2, col: 7 },
+  { fila: 4, col: 1 },
+  { fila: 4, col: 5 },
+  { fila: 6, col: 8 },
+  { fila: 7, col: 3 },
+  { fila: 8, col: 6 },
+  { fila: 9, col: 9 },);
   Basurasrecogidas = 0;
 }
