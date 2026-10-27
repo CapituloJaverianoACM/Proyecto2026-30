@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intérprete C++ con Phaser</title>
+    <style>
+      body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: #f2f2f2; color: #222; }
+      main { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: flex-start; }
+      #juego canvas { display: block; border: 1px solid #ccc; }
+      .panel { display: flex; flex-direction: column; gap: 8px; width: min(480px, 100%); }
+      textarea {
+        height: 320px; padding: 8px; box-sizing: border-box; resize: vertical;
+        font: 14px/1.4 ui-monospace, Consolas, monospace; tab-size: 4;
+      }
+      .botones { display: flex; gap: 8px; }
+      button { padding: 6px 14px; font-size: 14px; cursor: pointer; }
+      button:disabled { cursor: not-allowed; }
+      pre {
+        margin: 0; padding: 8px; min-height: 3em; white-space: pre-wrap; background: #fff;
+        border: 1px solid #ccc; font: 13px/1.4 ui-monospace, Consolas, monospace;
+      }
+      pre.error { color: #b71c1c; border-color: #b71c1c; }
+      small { color: #555; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="juego"></div>
+      <section class="panel">
+        <textarea id="codigo" spellcheck="false" aria-label="Código C++"></textarea>
+        <div class="botones">
+          <button id="ejecutar">Ejecutar</button>
+          <button id="detener">Detener</button>
+          <button id="reiniciar">Reiniciar tablero</button>
+        </div>
+        <pre id="salida" role="status"></pre>
+        <small>
+          Funciones del juego: avanzar(), girarDerecha(), girarIzquierda(), recogerBasura(),
+          hayPared(), hayBasura().
+        </small>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
