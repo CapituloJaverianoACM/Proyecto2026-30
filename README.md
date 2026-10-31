@@ -1,2 +1,2 @@
 # Ejecucion 
-Bun run dev
+npm run dev
